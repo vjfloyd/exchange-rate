@@ -1,8 +1,0 @@
-DROP TABLE IF EXISTS billionaires;
-
-CREATE TABLE exchangerate (
-  code VARCHAR(250) NOT NULL PRIMARY KEY,
-  toCurrency VARCHAR(250) NOT NULL,
-  fromCurrency VARCHAR(250) NOT NULL,
-  valueToday DECIMAL DEFAULT NULL
-);
