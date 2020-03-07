@@ -2,6 +2,7 @@ package com.exchange.rate.api.exchangerate.service;
 
 import com.exchange.rate.api.exchangerate.model.entity.ExchangeRate;
 import com.exchange.rate.api.exchangerate.model.request.ExchangeRateRequest;
+import com.exchange.rate.api.exchangerate.model.request.ExchangeRateSearchRequest;
 import com.exchange.rate.api.exchangerate.model.response.ExchangeRateResponse;
 import com.exchange.rate.api.exchangerate.repository.ExchangeRateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import rx.Observable;
 import rx.Single;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,30 +23,27 @@ public class ExchangeServiceImpl implements ExchangeRateService {
 
 
     @Override
-    public Single<ExchangeRateResponse> calculate(ExchangeRateRequest exchangeRateRequest) {
-            String code = exchangeRateRequest.getFromCurrency() +
-                    exchangeRateRequest.getToCurrency();
+    public Single<ExchangeRateResponse> calculate(ExchangeRateSearchRequest request) {
+        String code = request.getFromCurrency().concat(request.getToCurrency());
 
-//          Optional<ExchangeRate> exchangeRate =
-//                  exchangeRateRepository.findById(code);
-//          BigDecimal amountFinal = null;
-//          if (exchangeRate.isPresent()){
-//              amountFinal = exchangeRateRequest.getBaseAmount()
-//                      .multiply(exchangeRate.get().getValue());
-//
-//          }
-//
-//
-//
-//        return Single.just(ExchangeRateResponse.builder()
-//                .baseAmount(exchangeRateRequest.getBaseAmount())
-//                .calculatedAmount(amountFinal)
-//                .fromCurrency(exchangeRateRequest.getFromCurrency())
-//                .toCurrency(exchangeRateRequest.getToCurrency())
-//                .build());
+        Optional<ExchangeRate> exchangeRate =
+                  exchangeRateRepository.findById(code);
+          BigDecimal amountFinal = null;
+          if (exchangeRate.isPresent()){
+              amountFinal = request.getAmount()
+                      .multiply(exchangeRate.get().getExchangeRateValue());
+          }else{
+              //
+          }
 
-            return null;
+         ExchangeRateResponse response =  ExchangeRateResponse.builder()
+                 .code(exchangeRate.get().getCode())
+                 .amount(amountFinal)
+                 .fromCurrency(exchangeRate.get().getFromCurrency())
+                 .toCurrency(exchangeRate.get().getToCurrency())
+                 .build();
 
+        return Single.just(response);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class ExchangeServiceImpl implements ExchangeRateService {
                 .build();
         exchangeRateRepository.save(exchangeRate);
         return Single.just(ExchangeRateResponse.builder()
-            .exchangeRateValue(request.getExchangeRateValue())
+            .amount(request.getExchangeRateValue())
             .fromCurrency(request.getFromCurrency())
             .toCurrency(request.getToCurrency())
             .code(exchangeRate.getCode())
@@ -65,6 +65,3 @@ public class ExchangeServiceImpl implements ExchangeRateService {
     }
 
 }
-//
-//INSERT INTO exchangerate (first_name, last_name, career) VALUES
-//  ('Aliko', 'Dangote', 'Billionaire Industrialist'),

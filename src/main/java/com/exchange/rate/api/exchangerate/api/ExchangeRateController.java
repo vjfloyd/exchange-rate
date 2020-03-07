@@ -20,29 +20,16 @@ public class ExchangeRateController {
     ExchangeRateService exchangeRateService;
 
 
-    @GetMapping
+    @GetMapping(produces = {MediaType.APPLICATION_STREAM_JSON_VALUE})
     public Single<ExchangeRateResponse> search(@RequestBody ExchangeRateSearchRequest request) {
-       return null;
+       return exchangeRateService.calculate(request);
     }
 
 
-    @PostMapping(value = "/save", produces = {MediaType.APPLICATION_STREAM_JSON_VALUE})
+    @PostMapping(produces = {MediaType.APPLICATION_STREAM_JSON_VALUE})
     public Single<ExchangeRateResponse> save(@RequestBody ExchangeRateRequest request) {
         return exchangeRateService.save(request);
     }
 
 
 }
-
-//
-//
-//    Desarrollar una API con las siguientes consideraciones y funcionalidades:
-//        Consideraciones técnicas:
-//        El lenguaje de programación a utilizar es Java con el framework Spring Boot.
-//        Utilizar programación reactiva RxJava
-//        Funcionalidades Requeridas:
-//        Se debe crear una API para aplicar un tipo de cambio a un monto.
-//        La API debe recibir el valor “monto“, “moneda origen”, “moneda destino“ y devolver el “monto”, “monto con tipo de cambio”, “moneda origen”, “moneda destino“  y “tipo de cambio”.
-//        Se debe crear la información del tipo de cambio en una in memory database, por ejemplo H2.
-//        El uso de la API debe ser mostrada desde un cliente Http (Postman).
-//        Crear un post para actualizar el valor del tipo de cambio.
