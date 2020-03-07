@@ -33,7 +33,7 @@ public class ExchangeServiceImpl implements ExchangeRateService {
               amountFinal = request.getAmount()
                       .multiply(exchangeRate.get().getExchangeRateValue());
           }else{
-              //
+             // new throw Exception(,"",);
           }
 
          ExchangeRateResponse response =  ExchangeRateResponse.builder()
